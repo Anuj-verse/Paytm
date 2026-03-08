@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
 const transactionSchema = new mongoose.Schema({
-    sender: { type: String, required: true },
-    receiver: { type: String, required: true },
+    senderId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    receiverId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     amount: { type: Number, required: true },
-    refenenceId: { type: String, required: true },
-    status: { type: String, enum: ["pending", "success", "failed"], default: "pending" },
-    type: { type: String, enum: ["add_money", "withdraw", "wallet_transfer", "merchant_payment"] },
+    type: { type: String, enum: ["credit", "debit", "transfer"], default: "transfer" },
+    method: { type: String, enum: ["wallet", "card", "bank", "upi"], required: true },
+    status: { type: String, enum: ["pending", "completed", "failed"], default: "pending" },
+    description: { type: String },
+    referenceId: { type: String, unique: true, sparse: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 });

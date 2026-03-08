@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 declare const Wallet: mongoose.Model<{
     createdAt: NativeDate;
     updatedAt: NativeDate;
-    status: "active" | "inactive";
     userId: mongoose.Types.ObjectId;
     balance: number;
     currency: string;
+    status: "active" | "inactive";
     dailylimit: number;
     transaction: mongoose.Types.ObjectId[];
 }, {}, {}, {
@@ -13,10 +13,10 @@ declare const Wallet: mongoose.Model<{
 }, mongoose.Document<unknown, {}, {
     createdAt: NativeDate;
     updatedAt: NativeDate;
-    status: "active" | "inactive";
     userId: mongoose.Types.ObjectId;
     balance: number;
     currency: string;
+    status: "active" | "inactive";
     dailylimit: number;
     transaction: mongoose.Types.ObjectId[];
 }, {
@@ -24,10 +24,10 @@ declare const Wallet: mongoose.Model<{
 }, mongoose.DefaultSchemaOptions> & Omit<{
     createdAt: NativeDate;
     updatedAt: NativeDate;
-    status: "active" | "inactive";
     userId: mongoose.Types.ObjectId;
     balance: number;
     currency: string;
+    status: "active" | "inactive";
     dailylimit: number;
     transaction: mongoose.Types.ObjectId[];
 } & {
@@ -39,19 +39,19 @@ declare const Wallet: mongoose.Model<{
 }, mongoose.Schema<any, mongoose.Model<any, any, any, any, any, any, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, {
     createdAt: NativeDate;
     updatedAt: NativeDate;
-    status: "active" | "inactive";
     userId: mongoose.Types.ObjectId;
     balance: number;
     currency: string;
+    status: "active" | "inactive";
     dailylimit: number;
     transaction: mongoose.Types.ObjectId[];
 }, mongoose.Document<unknown, {}, {
     createdAt: NativeDate;
     updatedAt: NativeDate;
-    status: "active" | "inactive";
     userId: mongoose.Types.ObjectId;
     balance: number;
     currency: string;
+    status: "active" | "inactive";
     dailylimit: number;
     transaction: mongoose.Types.ObjectId[];
 }, {
@@ -59,10 +59,10 @@ declare const Wallet: mongoose.Model<{
 }, mongoose.DefaultSchemaOptions> & Omit<{
     createdAt: NativeDate;
     updatedAt: NativeDate;
-    status: "active" | "inactive";
     userId: mongoose.Types.ObjectId;
     balance: number;
     currency: string;
+    status: "active" | "inactive";
     dailylimit: number;
     transaction: mongoose.Types.ObjectId[];
 } & {
@@ -77,10 +77,10 @@ declare const Wallet: mongoose.Model<{
     [x: string]: mongoose.SchemaDefinitionProperty<any, any, mongoose.Document<unknown, {}, {
         createdAt: NativeDate;
         updatedAt: NativeDate;
-        status: "active" | "inactive";
         userId: mongoose.Types.ObjectId;
         balance: number;
         currency: string;
+        status: "active" | "inactive";
         dailylimit: number;
         transaction: mongoose.Types.ObjectId[];
     }, {
@@ -88,10 +88,10 @@ declare const Wallet: mongoose.Model<{
     }, mongoose.DefaultSchemaOptions> & Omit<{
         createdAt: NativeDate;
         updatedAt: NativeDate;
-        status: "active" | "inactive";
         userId: mongoose.Types.ObjectId;
         balance: number;
         currency: string;
+        status: "active" | "inactive";
         dailylimit: number;
         transaction: mongoose.Types.ObjectId[];
     } & {
@@ -104,10 +104,10 @@ declare const Wallet: mongoose.Model<{
 }, {
     createdAt: NativeDate;
     updatedAt: NativeDate;
-    status: "active" | "inactive";
     userId: mongoose.Types.ObjectId;
     balance: number;
     currency: string;
+    status: "active" | "inactive";
     dailylimit: number;
     transaction: mongoose.Types.ObjectId[];
 } & {
@@ -117,10 +117,10 @@ declare const Wallet: mongoose.Model<{
 }>, {
     createdAt: NativeDate;
     updatedAt: NativeDate;
-    status: "active" | "inactive";
     userId: mongoose.Types.ObjectId;
     balance: number;
     currency: string;
+    status: "active" | "inactive";
     dailylimit: number;
     transaction: mongoose.Types.ObjectId[];
 } & {

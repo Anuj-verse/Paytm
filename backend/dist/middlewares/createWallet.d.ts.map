@@ -1,0 +1,1 @@
+{"version":3,"file":"createWallet.d.ts","sourceRoot":"","sources":["../../src/middlewares/createWallet.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAC,QAAQ,EAAE,OAAO,EAAC,YAAY,EAAC,MAAM,SAAS,CAAC;AAI5D,QAAA,MAAM,YAAY,GAAU,KAAK,OAAO,EAAE,KAAK,QAAQ,EAAC,MAAM,YAAY,4DAsBzE,CAAA;AAED,eAAe,YAAY,CAAC"}

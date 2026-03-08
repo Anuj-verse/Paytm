@@ -21,7 +21,10 @@ router.post('/signup', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({ username, email, phone, password: hashedPassword });
         await newUser.save();
-        return res.status(201).json({ "message": "User created successfully" });
+        const token = jwt.sign({
+            _id: newUser._id,
+        }, process.env.JWT_SECRET);
+        return res.status(201).json({ "message": "User created successfully", "token": token });
     }
     catch (error) {
         console.log(error);
@@ -41,8 +44,7 @@ router.post('/signin', async (req, res) => {
         if (!isMatch)
             return res.status(401).json("password is incorrect");
         const token = jwt.sign({
-            username: user.username,
-            email: user.email
+            _id: user._id,
         }, process.env.JWT_SECRET);
         return res.status(201).json({ "token": token });
     }
