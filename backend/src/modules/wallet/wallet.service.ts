@@ -1,6 +1,7 @@
 import Wallet from "../../models/wallet.models.js";
 import User from "../../models/Users.models.js";
 import Transaction from "../../models/transaction.models.js";
+import { ledgerService } from "../ledger/ledger.service.js";
 import type { TransferRequest, AddMoneyRequest, WalletResponse, TransferResponse } from "./wallet.types.js";
 
 export class WalletService {
@@ -49,6 +50,14 @@ export class WalletService {
       description: `Added money via ${paymentMethod}`,
     });
     await transaction.save();
+
+    // Record ledger entry for credit with current balance
+    await ledgerService.recordEntry({
+      userId,
+      amount,
+      type: "credit",
+      description: `Added money via ${paymentMethod}`,
+    }, transaction._id.toString(), wallet.balance);
 
     // Add transaction to wallet
     wallet.transaction.push(transaction._id);
@@ -103,6 +112,10 @@ export class WalletService {
     // Perform transfer (should ideally be in a transaction)
     senderWallet.balance -= amount;
     receiverWallet.balance += amount;
+    await senderWallet.save();
+    await receiverWallet.save();
+    console.log(`Transferred ${amount} from user ${senderId} to user ${receiver._id}`);
+    console.log(`Sender new balance: ${senderWallet.balance}, Receiver new balance: ${receiverWallet.balance}`);
 
     // Create transaction records
     const transaction = new Transaction({
@@ -116,12 +129,28 @@ export class WalletService {
     });
     await transaction.save();
 
+    // Record ledger entries with current balances
+    // Debit for sender
+    await ledgerService.recordEntry({
+      userId: senderId,
+      amount: -amount, // Negative for debit
+      type: "debit",
+      description: `Transfer to ${receiver.username || receiver.phone}`,
+    }, transaction._id.toString(), senderWallet.balance);
+
+    // Credit for receiver - get sender info
+    const sender = await User.findById(senderId).select("username phone");
+    await ledgerService.recordEntry({
+      userId: receiver._id.toString(),
+      amount, // Positive for credit
+      type: "credit",
+      description: `Transfer from ${sender?.username || sender?.phone || 'Unknown'}`,
+    }, transaction._id.toString(), receiverWallet.balance);
+
     // Add transaction to both wallets
     senderWallet.transaction.push(transaction._id);
     receiverWallet.transaction.push(transaction._id);
 
-    await senderWallet.save();
-    await receiverWallet.save();
 
     return {
       message: "Transfer completed successfully",

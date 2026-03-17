@@ -1,6 +1,6 @@
 import type { LedgerEntry, LedgerResponse } from "./ledger.types.js";
 export declare class LedgerService {
-    recordEntry(data: LedgerEntry, transactionId?: string): Promise<void>;
+    recordEntry(data: LedgerEntry, transactionId?: string, balance?: number): Promise<void>;
     getLedger(userId: string, limit?: number, skip?: number): Promise<LedgerResponse>;
     getLedgerSummary(userId: string): Promise<any>;
     getBalanceHistory(userId: string, limit?: number): Promise<LedgerResponse>;

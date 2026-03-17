@@ -3,13 +3,17 @@ import Wallet from "../../models/wallet.models.js";
 import type { LedgerEntry, LedgerResponse } from "./ledger.types.js";
 
 export class LedgerService {
-  async recordEntry(data: LedgerEntry, transactionId?: string): Promise<void> {
+  async recordEntry(data: LedgerEntry, transactionId?: string, balance?: number): Promise<void> {
     const { userId, amount, type, description } = data;
 
-    // Get current wallet balance
-    const wallet = await Wallet.findOne({ userId });
-    if (!wallet) {
-      throw new Error("Wallet not found");
+    // Use provided balance or get current wallet balance
+    let currentBalance = balance;
+    if (currentBalance === undefined) {
+      const wallet = await Wallet.findOne({ userId });
+      if (!wallet) {
+        throw new Error("Wallet not found");
+      }
+      currentBalance = wallet.balance;
     }
 
     // Create ledger entry with running balance
@@ -18,7 +22,7 @@ export class LedgerService {
       transactionId,
       amount,
       type,
-      balance: wallet.balance,
+      balance: currentBalance,
       description,
     });
 
