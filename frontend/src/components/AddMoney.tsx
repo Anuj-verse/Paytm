@@ -93,7 +93,7 @@ const AddMoney: React.FC<AddMoneyProps> = ({ isOpen, onClose, onMoneyAdded }) =>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label className="text-gray-300">Amount ($)</Label>
+            <Label className="text-gray-300">Amount (₹)</Label>
             <Input
               type="number"
               step="0.01"

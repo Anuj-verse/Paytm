@@ -27,6 +27,7 @@ export const transferMoney = async (req: Request, res: Response): Promise<void> 
   try {
     const userId = (req as any)._id;
     const { receiverPhone, amount } = req.body as TransferRequest;
+    console.log("Transfer request received:", { receiverPhone, amount });
     const result = await walletService.transferMoney(userId, { receiverPhone, amount });
     res.status(200).json(result);
   } catch (error: any) {
