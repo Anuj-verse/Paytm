@@ -5,10 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { BadgeEuro } from "lucide-react";
 import { 
   ArrowRight, 
-  Wallet, 
   ShieldCheck, 
   Zap, 
-  Smartphone, 
   Globe 
 } from "lucide-react";
 
@@ -44,7 +42,9 @@ const LandingPage = () => {
             </div>
             {/* signup button */}
             <div className="btn mr-30">
-                <button className='bg-cyan-600 hover:bg-cyan-700 text-gray-200 font-bold px-6 py-2 rounded-full cursor-pointer'>Sign In</button>
+                <button className='bg-cyan-600 hover:bg-cyan-700 text-gray-200 font-bold px-6 py-2 rounded-full cursor-pointer' onClick={() =>
+                    window.location.href = '/login'
+                }>Sign In</button>
             </div>
         </nav>
 
@@ -69,7 +69,7 @@ const LandingPage = () => {
               send funds instantly to anyone, anywhere in the world.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button size="lg" className="bg-white text-black hover:bg-gray-200 rounded-xl h-14 px-8 text-md font-bold hover:shadow-lg cursor-pointer">
+              <Button size="lg" className="bg-white text-black hover:bg-gray-200 rounded-xl h-14 px-8 text-md font-bold hover:shadow-lg cursor-pointer" onClick={() => window.location.href = '/signup'}>
                 Get Started <ArrowRight className="ml-2" size={20} />
               </Button>
             </div>

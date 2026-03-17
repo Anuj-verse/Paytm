@@ -18,6 +18,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(rateLimitMiddleware(60 * 1000, 100)); // 100 requests per minute
+app.use(express.urlencoded({ extended: true }));
 // Health check endpoint
 app.get("/health", (req, res) => {
     res.status(200).json({
