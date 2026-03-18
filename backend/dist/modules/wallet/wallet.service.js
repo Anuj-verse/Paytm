@@ -94,8 +94,11 @@ export class WalletService {
         receiverWallet.balance += amount;
         await senderWallet.save();
         await receiverWallet.save();
+        // Capture updated balances AFTER save to ensure we log the correct values
+        const senderNewBalance = senderWallet.balance;
+        const receiverNewBalance = receiverWallet.balance;
         console.log(`Transferred ${amount} from user ${senderId} to user ${receiver._id}`);
-        console.log(`Sender new balance: ${senderWallet.balance}, Receiver new balance: ${receiverWallet.balance}`);
+        console.log(`Sender new balance: ${senderNewBalance}, Receiver new balance: ${receiverNewBalance}`);
         // Create transaction records
         const transaction = new Transaction({
             senderId,
@@ -107,14 +110,14 @@ export class WalletService {
             description: `Transfer to ${receiver.phone}`,
         });
         await transaction.save();
-        // Record ledger entries with current balances
+        // Record ledger entries with updated balances
         // Debit for sender
         await ledgerService.recordEntry({
             userId: senderId,
             amount: -amount, // Negative for debit
             type: "debit",
             description: `Transfer to ${receiver.username || receiver.phone}`,
-        }, transaction._id.toString(), senderWallet.balance);
+        }, transaction._id.toString(), senderNewBalance);
         // Credit for receiver - get sender info
         const sender = await User.findById(senderId).select("username phone");
         await ledgerService.recordEntry({
@@ -122,10 +125,12 @@ export class WalletService {
             amount, // Positive for credit
             type: "credit",
             description: `Transfer from ${sender?.username || sender?.phone || 'Unknown'}`,
-        }, transaction._id.toString(), receiverWallet.balance);
-        // Add transaction to both wallets
+        }, transaction._id.toString(), receiverNewBalance);
+        // Add transaction to both wallets and save
         senderWallet.transaction.push(transaction._id);
         receiverWallet.transaction.push(transaction._id);
+        await senderWallet.save();
+        await receiverWallet.save();
         return {
             message: "Transfer completed successfully",
             data: {
