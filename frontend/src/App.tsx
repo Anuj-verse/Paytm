@@ -4,6 +4,7 @@ import LandingPage from './pages/LandingPage'
 import SignupPage from './pages/Signup'
 import LoginPage from './pages/Login'
 import Dashboard from './pages/Dashboard'
+import TransactionHistory from './pages/TransactionHistory'
 import React from 'react';
 
 function App() {
@@ -50,6 +51,14 @@ function App() {
             element={
               <RequireAuth>
                 <Dashboard />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/transactions"
+            element={
+              <RequireAuth>
+                <TransactionHistory />
               </RequireAuth>
             }
           />
