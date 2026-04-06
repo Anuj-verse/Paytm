@@ -270,7 +270,7 @@ const Dashboard = () => {
           </div>
 
           <div className='text-center mt-6'>
-            <Button className='bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2 rounded-lg'>
+            <Button className='bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2 rounded-lg' onClick={() => navigate('/transactions')}>
               View All Transactions
             </Button>
           </div>
