@@ -41,12 +41,14 @@ jobs:
       
       #upload coverage reports
       - name: Upload coverage report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage-reports
+          if-no-files-found: error
           path: |
-            backend/coverage
-            frontend/coverage
+            backend/coverage/lcov.info
+            frontend/coverage/lcov.info
     
   analyse:
     needs: tests
@@ -61,6 +63,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: coverage-reports
+          path: coverage-reports
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@master
@@ -71,7 +74,7 @@ jobs:
           args: >
             -Dsonar.projectKey=paytm
             -Dsonar.sources=frontend/src,backend/src
-            -Dsonar.javascript.lcov.reportPaths=frontend/coverage/lcov.info,backend/coverage/lcov.info
+            -Dsonar.javascript.lcov.reportPaths=coverage-reports/frontend/coverage/lcov.info,coverage-reports/backend/coverage/lcov.info
             -Dsonar.exclusions=**/node_modules/**, **/coverage/**
 
       - name: SonarQube Quality Gate check
