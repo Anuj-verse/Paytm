@@ -9,5 +9,11 @@ export default defineConfig({
     alias: {
       '@': '/src',
     },
-  }
+  },
+  test: {
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'lcov'],
+    },
+  },
 })
