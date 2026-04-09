@@ -1,5 +1,5 @@
-version: "3.8"
 
+version: "3.8"
 services:
 
   backend:
@@ -11,16 +11,18 @@ services:
       MONGO_URI: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_CLUSTER}/
       MONGO_DB_NAME: ${MONGO_DB_NAME}
 
-    depends_on: 
-     - mongodb
-
   frontend:
     build: ./frontend
     container_name: frontend
     ports: 
-     - "5173:80"
+     - "80:80"
     depends_on:
      - backend
-
-volumes:
-  mongo-data:
+  
+  sonarqube:
+    image: sonarqube:latest
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+    

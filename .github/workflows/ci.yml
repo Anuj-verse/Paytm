@@ -26,7 +26,7 @@ jobs:
       - name: Run backend tests
         run: |
             cd backend
-            npm test
+            npm test -- --coverage
 
       #frontend test
       - name: Install frontend dependencies
@@ -37,52 +37,95 @@ jobs:
       - name: Run frontend tests
         run: |
             cd frontend
-            npm test -- --run
-  
-
-  build-and-push:
-    needs: tests
-    runs-on: ubuntu-latest
-
-    steps: 
-      - uses: actions/checkout@v3
-
-      - name: Login to Dockerhub
-        uses: docker/login-action@v2
-        with: 
-            username: ${{ secrets.DOCKER_USERNAME }}
-            password: ${{ secrets.DOCKER_PASSWORD }}
+            npm test -- --coverage
       
-      - name: Build and Push backend
-        run: |
-            docker build -t ${{ secrets.DOCKER_USERNAME }}/cid-meme-backend ./backend
-            docker push ${{ secrets.DOCKER_USERNAME }}/cid-meme-backend
-        
-      - name: Build and Push frontend
-        run: |
-            docker build \
-              --build-arg VITE_API_URL=http://${{ secrets.EC2_HOST }}:5000 \
-              -t ${{ secrets.DOCKER_USERNAME }}/cid-meme-frontend ./frontend
-
-            docker push ${{ secrets.DOCKER_USERNAME }}/cid-meme-frontend
-
-
-  deploy:
-    needs: build-and-push
+      #upload coverage reports
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-reports
+          path: |
+            backend/coverage
+            frontend/coverage
+    
+  analyse:
+    needs:tests
     runs-on: ubuntu-latest
 
-    steps: 
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with: 
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd app
-            docker compose pull
-            docker compose down
-            docker compose up -d
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Download coverage report
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage-reports
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=paytm
+            -Dsonar.sources=frontend/src,backend/src
+            -Dsonar.javascript.lcov.reportPaths=frontend/coverage/lcov.info,backend/coverage/lcov.info
+            -Dsonar.exclusions=**/node_modules/**, **/coverage/**
+
+      - name: SonarQube Quality Gate check
+        uses: SonarSource/sonarqube-quality-gate-action@master
+        timeout-minutes: 10
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        
+
+  
+  # build-and-push:
+  #   needs: analyse
+  #   runs-on: ubuntu-latest
+
+  #   steps: 
+  #     - uses: actions/checkout@v3
+
+  #     - name: Login to Nexus
+  #       uses: docker/login-action@v2
+  #       with: 
+  #           registry: ${{ secrets.NEXUS_REGISTRY }}
+  #           username: ${{ secrets.NEXUS_USERNAME }}
+  #           password: ${{ secrets.NEXUS_PASSWORD }}
+      
+  #     - name: Build and Push backend
+  #       run: |
+  #           docker build -t ${{ secrets.NEXUS_REGISTRY }}/cid-meme-backend ./backend
+  #           docker push ${{ secrets.NEXUS_REGISTRY }}/cid-meme-backend
+        
+  #     - name: Build and Push frontend
+  #       run: |
+  #           docker build \
+  #             --build-arg VITE_API_URL=http://${{ secrets.EC2_HOST }}:5000 \
+  #             -t ${{ secrets.NEXUS_REGISTRY }}/cid-meme-frontend ./frontend
+
+  #           docker push ${{ secrets.NEXUS_REGISTRY }}/cid-meme-frontend
+
+
+  # deploy:
+  #   needs: build-and-push
+  #   runs-on: ubuntu-latest
+
+  #   steps: 
+  #     - name: Deploy to EC2
+  #       uses: appleboy/ssh-action@v1.0.3
+  #       with: 
+  #         host: ${{ secrets.EC2_HOST }}
+  #         username: ${{ secrets.EC2_USER }}
+  #         key: ${{ secrets.EC2_SSH_KEY }}
+  #         script: |
+  #           cd app
+  #           docker compose pull
+  #           docker compose down
+  #           docker compose up -d
 
 
 

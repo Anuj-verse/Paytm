@@ -1,7 +1,7 @@
-FROM node:18-alpine as build
+#stage 1
+FROM node:18-alpine AS build
 
 WORKDIR /app
-
 
 ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
@@ -12,9 +12,11 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Install static server
-RUN npm install -g serve
+#stage 2
 
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80
 
-CMD ["serve", "-s", "dist", "-l", "80"]
+
+
