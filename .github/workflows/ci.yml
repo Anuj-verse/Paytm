@@ -85,32 +85,32 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   
-  # build-and-push:
-  #   needs: analyse
-  #   runs-on: ubuntu-latest
+  build-and-push:
+    needs: analyse
+    runs-on: ubuntu-latest
 
-  #   steps: 
-  #     - uses: actions/checkout@v3
+    steps: 
+      - uses: actions/checkout@v3
 
-  #     - name: Login to Nexus
-  #       uses: docker/login-action@v2
-  #       with: 
-  #           registry: ${{ secrets.NEXUS_REGISTRY }}
-  #           username: ${{ secrets.NEXUS_USERNAME }}
-  #           password: ${{ secrets.NEXUS_PASSWORD }}
+      - name: Login to Nexus
+        uses: docker/login-action@v2
+        with: 
+            registry: ${{ secrets.NEXUS_REGISTRY }}
+            username: ${{ secrets.NEXUS_USERNAME }}
+            password: ${{ secrets.NEXUS_PASSWORD }}
       
-  #     - name: Build and Push backend
-  #       run: |
-  #           docker build -t ${{ secrets.NEXUS_REGISTRY }}/cid-meme-backend ./backend
-  #           docker push ${{ secrets.NEXUS_REGISTRY }}/cid-meme-backend
+      - name: Build and Push backend
+        run: |
+            docker build -t ${{ secrets.NEXUS_REGISTRY }}/backend ./backend
+            docker push ${{ secrets.NEXUS_REGISTRY }}/backend
         
-  #     - name: Build and Push frontend
-  #       run: |
-  #           docker build \
-  #             --build-arg VITE_API_URL=http://${{ secrets.EC2_HOST }}:5000 \
-  #             -t ${{ secrets.NEXUS_REGISTRY }}/cid-meme-frontend ./frontend
+      - name: Build and Push frontend
+        run: |
+            docker build \
+              --build-arg VITE_API_URL=http://${{ secrets.EC2_HOST }}:5000 \
+              -t ${{ secrets.NEXUS_REGISTRY }}/frontend ./frontend
 
-  #           docker push ${{ secrets.NEXUS_REGISTRY }}/cid-meme-frontend
+            docker push ${{ secrets.NEXUS_REGISTRY }}/frontend
 
 
   # deploy:
