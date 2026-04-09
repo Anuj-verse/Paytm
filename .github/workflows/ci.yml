@@ -39,13 +39,20 @@ jobs:
             cd frontend
             npm test -- --coverage
       
+      - name: Verify coverage files
+        run: |
+          ls -la backend/coverage || true
+          ls -la frontend/coverage || true
+          test -f backend/coverage/lcov.info
+          test -f frontend/coverage/lcov.info
+
       #upload coverage reports
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage-reports
-          if-no-files-found: error
+          if-no-files-found: warn
           path: |
             backend/coverage/lcov.info
             frontend/coverage/lcov.info
@@ -75,7 +82,8 @@ jobs:
             -Dsonar.projectKey=paytm
             -Dsonar.sources=frontend/src,backend/src
             -Dsonar.javascript.lcov.reportPaths=coverage-reports/frontend/coverage/lcov.info,coverage-reports/backend/coverage/lcov.info
-            -Dsonar.exclusions=**/node_modules/**, **/coverage/**
+            -Dsonar.exclusions=**/node_modules/**,**/coverage/**
+        
 
       - name: SonarQube Quality Gate check
         uses: SonarSource/sonarqube-quality-gate-action@master
