@@ -98,16 +98,19 @@ jobs:
         run: |
           REGISTRY="${RAW_REGISTRY#http://}"
           REGISTRY="${REGISTRY#https://}"
+          REGISTRY="${REGISTRY%/}"   # remove trailing slash
           echo "Checking registry: ${REGISTRY}"
-          curl -fsS "https://${REGISTRY}/v2/" || \
-          (echo "Registry endpoint is invalid for Docker v2 API"; exit 1)
+          
+          STATUS=$(curl -sS -o /dev/null -w "%{http_code}" "https://${REGISTRY}/v2/")
+          if [ "$STATUS" != "200" ] && [ "$STATUS" != "401" ]; then
+            echo "Registry endpoint check failed (HTTP $STATUS)"
+            exit 1
+          fi
 
       - name: Login to Nexus
         uses: docker/login-action@v2
-        env:
-          RAW_REGISTRY: ${{ secrets.NEXUS_REGISTRY }}
         with: 
-          registry: ${{ env.RAW_REGISTRY }}
+          registry: ${{ secrets.NEXUS_REGISTRY }}
           username: ${{ secrets.NEXUS_USERNAME }}
           password: ${{ secrets.NEXUS_PASSWORD }}
       
