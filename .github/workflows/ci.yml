@@ -92,6 +92,12 @@ jobs:
     steps: 
       - uses: actions/checkout@v3
 
+      - name: Validate registry endpoint
+        run: |
+          echo "Checking registry: ${{ secrets.NEXUS_REGISTRY }}"
+          curl -fsS "https://${{ secrets.NEXUS_REGISTRY }}/v2/" || \
+          (echo "Registry endpoint is invalid for Docker v2 API"; exit 1)
+
       - name: Login to Nexus
         uses: docker/login-action@v2
         with: 
@@ -101,16 +107,15 @@ jobs:
       
       - name: Build and Push backend
         run: |
-            docker build -t ${{ secrets.NEXUS_REGISTRY }}/backend ./backend
-            docker push ${{ secrets.NEXUS_REGISTRY }}/backend
+            docker build -t ${{ secrets.NEXUS_REGISTRY }}/backend:latest ./backend
+            docker push ${{ secrets.NEXUS_REGISTRY }}/backend:latest
         
       - name: Build and Push frontend
         run: |
             docker build \
               --build-arg VITE_API_URL=http://${{ secrets.EC2_HOST }}:5000 \
-              -t ${{ secrets.NEXUS_REGISTRY }}/frontend ./frontend
-
-            docker push ${{ secrets.NEXUS_REGISTRY }}/frontend
+              -t ${{ secrets.NEXUS_REGISTRY }}/frontend:latest ./frontend
+            docker push ${{ secrets.NEXUS_REGISTRY }}/frontend:latest
 
 
   # deploy:
