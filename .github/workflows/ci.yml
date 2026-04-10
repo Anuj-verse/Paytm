@@ -86,7 +86,7 @@ jobs:
 
   
   build-and-push:
-    needs: analyse
+    # needs: analyse
     runs-on: ubuntu-latest
 
     steps: 
